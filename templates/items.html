@@ -1,0 +1,109 @@
+{{template "head"}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+</head>
+<body>
+
+		{{ partial "nav" }}
+
+		<main class="container">
+			<div class="row">
+				<div class="card" style="width: 100%;">
+					<div id="responseMessage"></div>
+					 <div class="card-body">
+						<form id="itemsForm" class="form-inline justify-content-around align-items-center">
+							<div class="form-group">
+								<label class="sr-only" for="item_name">Item Name</label>
+								<input type="text" class="form-control" id="item_name" name="item_name" placeholder="Item Name">
+							</div>
+							<div class="form-group">
+								<label class="sr-only" for="item_cost">Cost</label>
+								<input type="text" class="form-control" id="item_cost" name="item_cost" placeholder="Cost">
+							</div>
+							<div class="form-group">
+								<label class="sr-only" for="item_price">Price</label>
+								<input type="text" class="form-control" id="item_price" name="item_price" placeholder="Price">
+							</div>
+							<div class="form-group">
+								<label class="sr-only" for="category">Category</label>
+								<select class="form-control" id="category" name="category">
+
+									{{ range .Categories }}
+
+										<option>{{ .Category }}</option>
+
+									{{ end }}
+
+								</select>
+							</div>
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</form>
+						</div>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+					<div class="card" style="width: 100%;">
+						<h3>Current Items</h3>
+					<div class="card-body">
+          <table id="currentItems" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Cost</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+              {{ range .Items }}
+                <tr>
+                    <td>{{ .ID }}</td>
+                    <td>{{ .ItemName }}</td>
+                    <td>{{ .ItemCost }}</td>
+                    <td>{{ .ItemPrice }}</td>
+                    <td>{{ .Category }}</td>
+                    <td><button id="{{ .ID }}" class="btn btn-danger remove">Remove</button></td>
+                </tr>
+              {{ end }}
+            </tbody>
+          </table>
+					</div>
+      </div>
+			</div>
+      <div class="row justify-content-center">
+				<div class="card" style="width:100%;">
+				<div class="card-body">
+        <table id="deletedItems" class="display" style="width:100%">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Cost</th>
+                  <th>Price</th>
+                  <th>Category</th>
+                  <th>Restore</th>
+              </tr>
+          </thead>
+          <tbody>
+            {{ range .DeletedItems }}
+              <tr>
+                  <td>{{ .ID }}</td>
+                  <td>{{ .ItemName }}</td>
+                  <td>{{ .ItemCost }}</td>
+                  <td>{{ .ItemPrice }}</td>
+                  <td>{{ .Category }}</td>
+                  <td><button id="deleted_{{ .ID }}" class="btn btn-success restore">Restore</button></td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+				</div>
+				</div>
+      </div>
+		</main>
+{{template "tail"}}
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="/assets/js/pages/items.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{{ template "head" }}
+</head>
+<body>
+<main class="container loginWrapper">
+  <div class="row justify-content-center">
+    <h1>Inventory</h1>
+  </div>
+  <div class="row justify-content-center">
+    <div class="card" style="width: 22rem;">
+      <div class="card-body">
+        <h5 class="card-title">Login</h5>
+        <span id="errBlock">{{ .ErrMsg }}</span>
+        <form method="post" action="/loginaction">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input class="form-control" type="text" id="username" name="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input class="form-control" type="password" id="password" name="password">
+            </div>
+            <div class="form-row form-group justify-content-end" style="margin-right: 1em;">
+                <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div style="text-align: center;">
+    <a class="loginLinks" href="/passwordresetrequest">Reset Password</a>
+    <a class="loginLinks" href="/signup">Sign Up</a>
+  </div>
+</main>
+{{ template "tail" }}
+</body>
+</html>

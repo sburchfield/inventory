@@ -1,0 +1,25 @@
+{{ template "head" }}
+</head>
+
+<body>
+
+  <main class="container signupWrapper">
+    <div class="row justify-content-center">
+      <h1>Inventory</h1>
+    </div>
+    <div class="row justify-content-center">
+      <div class="card" style="width: 60%;">
+        <div class="card-body">
+          <h5 class="card-title">Sign Up</h5>
+          <p>A confirmation email has been sent to (<b>{{.Email}}</b>). You can login in to the system now.</p>
+        </div>
+      </div>
+    </div>
+      <div style="text-align: center;">
+        <a class="loginLinks" href="/login">Login</a>
+      </div>
+    </main>
+
+{{ template "tail" }}
+</body>
+</html>

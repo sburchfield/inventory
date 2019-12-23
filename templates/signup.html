@@ -1,0 +1,61 @@
+{{ template "head" }}
+</head>
+
+<body>
+  <main class="container signupWrapper">
+    <div class="row justify-content-center">
+      <h1>Inventory</h1>
+    </div>
+    <div class="row justify-content-center">
+      <div class="card" style="width: 60%;">
+        <div class="card-body">
+          <h5 class="card-title">Sign Up</h5>
+          <span id="errBlock" style="color:red;">{{ .Label }}</span>
+          <form method="post" action="/signupaction">
+            <div class="form-row form-group">
+              <div class="col">
+                  <label for="first_name">First Name *</label>
+                  <input class="form-control" type="text" id="first_name" name="first_name" value="{{ .FirstName }}">
+              </div>
+              <div class="col">
+                  <label for="last_name">Last Name *</label>
+                  <input class="form-control" type="text" id="last_name" name="last_name" value="{{ .LastName }}">
+              </div>
+            </div>
+              <div class="form-row form-group">
+                <div class="col">
+                  <label for="username">Email *</label>
+                  <input class="form-control" type="email" id="username" name="username" value="{{ .Username }}">
+                  <!-- <span class="uk-form-help-block">Used as login username and for notification/correspondence.</span> -->
+                </div>
+              </div>
+              <div class="form-row form-group">
+                <div class="col">
+                    <label for="password">Password *</label>
+                    <input class="form-control" type="password" id="password" name="password">
+                    <span class="uk-form-help-block">Minimum 8 alphanumeric characters.</span>
+                </div>
+                <div class="col">
+                    <label for="password2">Repeat Password *</label>
+                    <input class="form-control" type="password" id="password2" name="password2">
+                </div>
+              </div>
+              <div class="form-row form-group justify-content-end" style="margin-right: 1em;">
+                  <button class="btn btn-primary" type="submit" id="signupBtn">Sign Up</button>
+              </div>
+              <div>
+                  <span style="display:block; text-align: center;">[*] Required Fields</span>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center;">
+      <a class="loginLinks" href="/login">Login</a>
+    </div>
+  </main>
+
+
+{{ template "tail" }}
+</body>
+</html>
