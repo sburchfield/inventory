@@ -39,6 +39,9 @@ func defineRoutes() {
 	muxRouter.HandleFunc("/removeCategory/{category_id}/{category}", removeCategory)
 	muxRouter.HandleFunc("/restoreCategory/{category_id}/{category}", restoreCategory)
 
+	muxRouter.HandleFunc("/removeUser/{user_uuid}", removeUser)
+	muxRouter.HandleFunc("/restoreUser/{user_uuid}", restoreUser)
+
 	muxRouter.HandleFunc("/updateItems", updateItems)
 	muxRouter.HandleFunc("/removeItem/{item_id}", removeItem)
 	muxRouter.HandleFunc("/restoreItem/{item_id}", restoreItem)

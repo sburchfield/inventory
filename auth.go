@@ -3,12 +3,12 @@ package main
 
 import(
   "net/http"
-  "strings"
+  // "strings"
   "log"
   "strconv"
   "time"
 
-  "github.com/badoux/checkmail"
+  // "github.com/badoux/checkmail"
   "gnardex/gosecrets"
   "github.com/gorilla/mux"
   "github.com/google/uuid"
@@ -176,115 +176,6 @@ func signup(w http.ResponseWriter, r *http.Request) {
 		Username:  "",
 	}
 	viewRender.HTML(w, http.StatusOK, "signup", payload, noLayout)
-
-}
-
-func signupAction(w http.ResponseWriter, r *http.Request) {
-
-	un := strings.TrimSpace(r.PostFormValue("username"))
-	pw := strings.TrimSpace(r.PostFormValue("password"))
-	fn := strings.TrimSpace(r.PostFormValue("first_name"))
-	ln := strings.TrimSpace(r.PostFormValue("last_name"))
-
-	payload := struct {
-		Label       string
-		FirstName   string
-		LastName    string
-		Username    string
-	}{
-		//Label:     userLabel,
-		FirstName:   fn,
-		LastName:    ln,
-		Username:    un,
-	}
-
-	//Check if the user is already signed up
-	var count int
-	if err := dbConn.db.Model(&user{}).
-		Where("username = ?", un).
-		Count(&count).Error; err != nil {
-		log.Println(err)
-
-		payload.Label = "Sorry! There was an error in submitting the form."
-		viewRender.HTML(w, http.StatusOK, "signup", payload, noLayout)
-		return
-
-	}
-
-	if count > 0 {
-
-		payload.Label = "User with this email (" + un + ") already present in the system."
-		viewRender.HTML(w, http.StatusOK, "signup", payload, noLayout)
-		return
-
-	}
-
-	//Generate hashed password
-	ps, err := gosecrets.GetPasswordHash(pw)
-	if err != nil {
-		log.Println(err)
-		payload.Label = "Please create a password with at least 8 digits."
-		viewRender.HTML(w, http.StatusOK, "signup", payload, noLayout)
-		return
-
-	}
-
-		//Check user provided email
-		if err := checkmail.ValidateFormat(un); err != nil {
-			payload.Label = "Please provide a valid email for registration."
-			viewRender.HTML(w, http.StatusOK, "signup", payload, noLayout)
-			return
-		}
-
-    user_uuid := uuid.New().String()
-
-	//create user
-	u := user{
-    UserUuid:     user_uuid,
-		Username:     un,
-		UserEmail:    un,
-		PasswordHash: ps,
-		FirstName:    fn,
-		LastName:     ln,
-		Status:       "active",
-		ResetTime:    nil,
-	}
-
-	if err := dbConn.db.Create(&u).Error; err != nil {
-
-		log.Println(err)
-		payload.Label = "Sorry! There was an error in submitting the form"
-		viewRender.HTML(w, http.StatusOK, "signup", payload, noLayout)
-		return
-
-	}
-
-	//Send signup email
-	if err := sendSignupEmail(un); err != nil {
-    payload2 := struct {
-  		Success     bool
-  		Label       string
-  		Email       string
-  	}{
-  		Success:     true,
-  		Label:       "Signup complete. You can login now, but due to some internal issues unable to send the confirmation email.",
-  		Email:       un,
-  	}
-  	viewRender.HTML(w, http.StatusOK, "signupAction", payload2, noLayout)
-		return
-
-	}
-
-	payload2 := struct {
-		Success     bool
-		Label       string
-		Email       string
-	}{
-		Success:     true,
-		Label:       "Account Successfully Created.",
-		Email:       un,
-	}
-	viewRender.HTML(w, http.StatusOK, "signupAction", payload2, noLayout)
 
 }
 

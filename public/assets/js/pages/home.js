@@ -103,13 +103,13 @@ $(document).ready( function () {
     // console.log(data);
 
     data.forEach(element => {
-      console.log(element);
+      // console.log(element);
 
       element.UserUuid = user
       element.StoreId = store
     })
 
-    console.log(data);
+    // console.log(data);
 
     $.ajax({
       method: "POST",
@@ -120,6 +120,8 @@ $(document).ready( function () {
     })
     .done(function( data ) {
       console.log(data);
+
+      $("#response").html(data)
 
     })
     .fail(function( err ){
@@ -133,7 +135,7 @@ $(document).ready( function () {
 
 
   $("#next").click(function(){
-    
+
   })
 
 })

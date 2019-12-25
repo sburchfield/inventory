@@ -9,7 +9,10 @@ import(
   "time"
   // "fmt"
 
+  "github.com/badoux/checkmail"
   "github.com/gorilla/mux"
+  "gnardex/gosecrets"
+  "github.com/google/uuid"
 )
 
 func enableCors(w *http.ResponseWriter) {
@@ -315,24 +318,15 @@ for i := range orders {
       log.Println(err)
     }
 
-    log.Println(emailOrder)
-
-    // defer rows.Close()
-    // for rows.Next() {
-    //   dbConn.db.ScanRows(rows, &emailOrder)
-    //   log.Println(emailOrder)
-    // }
-
     payloadEmail := struct {
       EmailOrder   []EmailOrder
     }{
       EmailOrder: emailOrder,
     }
 
+    // TODO: send email to all admins
+
     sendOrdersEmail("saburchfield@gmail.com", payloadEmail)
-
-
-
 
 
   viewRender.Text(w, http.StatusCreated, "Success!")
@@ -459,6 +453,168 @@ func restoreCategory ( w http.ResponseWriter, r *http.Request ){
     Categories: 			 category,
     Message:     "Item Restored",
     RemoveBy:    category_id,
+  }
+
+  viewRender.JSON(w, http.StatusOK, payload)
+
+}
+
+func signupAction(w http.ResponseWriter, r *http.Request) {
+
+  pw := gosecrets.GeneratePassword()
+  user_uuid := uuid.New().String()
+
+  r.ParseForm()
+
+  payload := struct {
+    Label  string
+  }{
+    Label: "",
+  }
+
+  //Generate hashed password
+  ps, err := gosecrets.GetPasswordHash(pw)
+  if err != nil {
+    log.Println(err)
+    payload.Label = "There was an error with assigning the user a password"
+    viewRender.HTML(w, http.StatusOK, "users", payload)
+    return
+
+  }
+
+  var u = user{
+    UserUuid:     user_uuid,
+    UserEmail: strings.ToLower(r.FormValue("username")),
+    Username: strings.ToLower(r.FormValue("username")),
+    FirstName: strings.ToLower(r.FormValue("first_name")),
+    LastName: strings.ToLower(r.FormValue("last_name")),
+    Role: strings.ToLower(r.FormValue("role")),
+    PasswordHash: ps,
+    Status:       "active",
+    ResetTime:    nil,
+  }
+
+	//Check if the user is already signed up
+  un := u.Username
+	var count int
+
+	if err := dbConn.db.Model(&user{}).Where("username = ?", un).Count(&count).Error; err != nil {
+		log.Println(err)
+
+		viewRender.Text(w, http.StatusOK, "Sorry! There was an error in submitting the form.")
+		return
+
+	}
+
+	if count > 0 {
+    log.Println("User already exists")
+		viewRender.Text(w, http.StatusOK, "User with this email (" + un + ") already present in the system.")
+		return
+
+	}
+
+
+		//Check user provided email
+		if err := checkmail.ValidateFormat(un); err != nil {
+      log.Println("Not a valid user email")
+      log.Println(err)
+      viewRender.Text(w, http.StatusOK, "Please provide a valid email for registration.")
+			return
+		}
+
+	//create user
+
+	if err := dbConn.db.Create(&u).Error; err != nil {
+
+		log.Println(err)
+    viewRender.Text(w, http.StatusOK, "Sorry! There was an error in submitting the form")
+		return
+
+	}
+
+  emailPayload := struct {
+    Password string
+    Username string
+  }{
+    Password: pw,
+    Username: un,
+  }
+
+	//Send signup email
+	if err := sendSignupEmail(un, emailPayload); err != nil {
+  	viewRender.Text(w, http.StatusOK, "Signup complete. You can login now, but due to some internal issues unable to send the confirmation email.")
+		return
+
+	}
+
+	viewRender.Text(w, http.StatusOK, "Success!")
+
+}
+
+func removeUser ( w http.ResponseWriter, r *http.Request ){
+
+  vars := mux.Vars(r)
+  user_uuid := vars["user_uuid"]
+
+  var u []user
+
+  if err :=  dbConn.db.Where("user_uuid = ?", user_uuid).Delete(u).Error; err != nil {
+
+    log.Println("Error with deleting user: ", err)
+    viewRender.Text(w, http.StatusOK, "Error! Deleting user.")
+
+  }
+
+  if err := dbConn.db.Raw("Select * FROM inventory.users WHERE deleted_at IS NOT NULL").Scan(&u).Error; err != nil {
+
+    log.Println("Error with retrieving categories: ", err)
+    viewRender.Text(w, http.StatusOK, "Error! Retrieving users list.")
+
+  }
+
+  payload := struct {
+    Message      string
+    U            []user
+    RemoveBy     string
+  }{
+    U: 			     u,
+    Message:     "User Deleted",
+    RemoveBy:    user_uuid,
+  }
+
+  viewRender.JSON(w, http.StatusOK, payload)
+
+}
+
+func restoreUser ( w http.ResponseWriter, r *http.Request ){
+
+  vars := mux.Vars(r)
+  user_uuid := vars["user_uuid"]
+
+  var u []user
+
+  if err :=  dbConn.db.Exec("UPDATE inventory.users SET deleted_at = NULL WHERE user_uuid = ?", user_uuid).Error; err != nil {
+
+    log.Println("Error with deleting user: ", err)
+    viewRender.Text(w, http.StatusOK, "Error! Restoring user.")
+
+  }
+
+  if err := dbConn.db.Find(&u).Scan(&u).Error; err != nil {
+
+    log.Println("Error with retrieving user: ", err)
+    viewRender.Text(w, http.StatusOK, "Error! Retrieving users list.")
+
+  }
+
+  payload := struct {
+    Message      string
+    U            []user
+    RemoveBy     string
+  }{
+    U: 			      u,
+    Message:     "Store Restored",
+    RemoveBy:    user_uuid,
   }
 
   viewRender.JSON(w, http.StatusOK, payload)

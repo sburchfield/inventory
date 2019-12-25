@@ -2,6 +2,8 @@
 package main
 
 import (
+	// "log"
+
 	mailer "gnardex/mailer"
 )
 
@@ -41,19 +43,14 @@ func sendPasswordResetEmail(emailTo string, payload interface{}) error {
 
 }
 
-func sendSignupEmail(emailTo string) error {
+func sendSignupEmail(emailTo string, payload interface{}) error {
+
 
 	mailer.From = "saburchfield@gmail.com"
 	mailer.ReplyTo = "saburchfield@gmail.com"
-	subject := "Inventory Password Reset Link"
-
-	payload := struct {
-		AppVersion string
-	}{
-		AppVersion: "inventory-backend",
-	}
-
+	subject := "Inventory Sign Up"
 	tag := "signup"
+
 
 	htmlpayload, err := mailer.GetTemplateHtml(tag, payload)
 	if err != nil {

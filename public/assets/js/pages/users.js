@@ -1,45 +1,37 @@
 $(document).ready( function () {
 
-  const currentUsersTable = $('#currentUsers').DataTable({
-  "columnDefs": [
-    { className: "category", "targets": [ 1 ] }
-  ]
-});
-  const deletedUsersTable = $('#deletedUsers').DataTable({
-  "columnDefs": [
-    { className: "category", "targets": [ 1 ] }
-  ]
-});
+  const currentUsersTable = $('#currentUsers').DataTable();
+  const deletedUsersTable = $('#deletedUsers').DataTable();
 
-  $("#categoriesForm").submit(function(e){
+  $("#usersForm").submit(function(e){
     e.preventDefault()
 
-    let data = $("#categoriesForm").serialize()
+    let data = $("#usersForm").serialize()
 
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/updateCategories",
+      url: "http://localhost:3000/signupaction",
       data: data
     }).done(function( data ) {
 
       console.log(data);
 
-        $("#responseMessage").empty()
-        $("#responseMessage").append('<h5 class="animated fadeOut">'+data.Message+'</h5>');
-
-        currentCategoriesTable.clear()
-
-        data.Categories.forEach(function(value){
-
-          let rmvButton = '<td><button id="'+value.ID+'" class="btn btn-danger remove">Remove</button></td>'
-
-          let array = [value.ID, value.Category, value.Description, rmvButton]
-
-          $('#currentCategories').DataTable().row.add(array).draw()
-
-            $("#categoriesForm")[0].reset()
-
-        })
+        // $("#responseMessage").empty()
+        // $("#responseMessage").append('<h5 class="animated fadeOut">'+data.Message+'</h5>');
+        //
+        // currentCategoriesTable.clear()
+        //
+        // data.Categories.forEach(function(value){
+        //
+        //   let rmvButton = '<td><button id="'+value.ID+'" class="btn btn-danger remove">Remove</button></td>'
+        //
+        //   let array = [value.ID, value.Category, value.Description, rmvButton]
+        //
+        //   $('#currentCategories').DataTable().row.add(array).draw()
+        //
+        //     $("#categoriesForm")[0].reset()
+        //
+        // })
 
 
 
@@ -50,15 +42,14 @@ $(document).ready( function () {
 
   $(document).on("click", ".remove", function(){
 
-    let category_id = $(this).attr('id')
-    let category = $(this).parents("tr").find(".category").html()
+    let user_uuid = $(this).attr('id')
 
     $("#responseMessage").empty();
 
 
     bootbox.confirm({
-        title: "Destroy Category?",
-        message: "Do you want to destroy this category and its items?",
+        title: "Destroy User?",
+        message: "Do you want to destroy this user?",
         buttons: {
             cancel: {
                 label: 'Cancel'
@@ -72,22 +63,24 @@ $(document).ready( function () {
           if(result){
             $.ajax({
               method: "GET",
-              url: "http://localhost:3000/removeCategory/"+ category_id + "/" + category,
+              url: "http://localhost:3000/removeUser/"+ user_uuid,
             }).done(function( data ) {
 
-                deletedCategoriesTable.clear()
+              console.log(data);
 
-                if (data.RemoveBy == category_id){
+                deletedUsersTable.clear()
+
+                if (data.RemoveBy == user_uuid){
                   $("#" + data.RemoveBy).parent().parent().remove()
                   $("#responseMessage").append('<h5 class="animated fadeOut">'+data.Message+'</h5>');
 
-                  data.Categories.forEach(function(value){
+                  data.U.forEach(function(value){
 
-                    let restoreButton = '<td><button id="deleted_'+value.ID+'" class="btn btn-success restore">Restore</button></td>'
+                    let restoreButton = '<td><button id="deleted_'+value.UserUuid+'" class="btn btn-success restore">Restore</button></td>'
 
-                    let array = [value.ID, value.Category, value.Description, restoreButton]
+                    let array = [ value.Username, value.FirstName, value.LastName, value.Role, restoreButton]
 
-                    $('#deletedCategories').DataTable().row.add(array).draw()
+                    $('#deletedUsers').DataTable().row.add(array).draw()
 
                   })
 
@@ -105,14 +98,13 @@ $(document).ready( function () {
 
     $(document).on("click", ".restore", function(){
 
-      let category_id = $(this).attr('id').split("_")
-      let category = $(this).parents("tr").find(".category").html()
+      let user_uuid = $(this).attr('id').split("_")
 
       $("#responseMessage").empty();
 
       bootbox.confirm({
-          title: "Restore Category?",
-          message: "Do you want to restore this category and all of its associated items?",
+          title: "Restore User?",
+          message: "Do you want to restore this user?",
           buttons: {
               cancel: {
                   label: '<i class="fa fa-times"></i> Cancel'
@@ -125,21 +117,23 @@ $(document).ready( function () {
               if(result){
                 $.ajax({
                   method: "GET",
-                  url: "http://localhost:3000/restoreCategory/"+ category_id[1] + "/" + category,
+                  url: "http://localhost:3000/restoreUser/"+ user_uuid[1],
                 }).done(function( data ) {
-                  currentCategoriesTable.clear()
+                  currentUsersTable.clear()
 
-                  if( data.RemoveBy == category_id[1]){
+                  console.log(data);
+
+                  if( data.RemoveBy == user_uuid[1]){
                     $("#deleted_" + data.RemoveBy).parent().parent().remove()
                     $("#responseMessage").append('<h5 class="animated fadeOut">'+data.Message+'</h5>');
 
-                    data.Categories.forEach(function(value){
+                    data.U.forEach(function(value){
 
-                      let rmvButton = '<td><button id="'+value.ID+'" class="btn btn-danger remove">Remove</button></td>'
+                      let rmvButton = '<td><button id="'+value.UserUuid+'" class="btn btn-danger remove">Remove</button></td>'
 
-                      let array = [value.ID, value.Category, value.Description, rmvButton]
+                      let array = [value.Username, value.FirstName, value.LastName, value.Role, rmvButton]
 
-                      $('#currentCategories').DataTable().row.add(array).draw()
+                      $('#currentUsers').DataTable().row.add(array).draw()
 
                     })
                   }else{
