@@ -318,6 +318,8 @@ for i := range orders {
       log.Println(err)
     }
 
+    // emailOrder.UpdatedAt = emailOrder.UpdatedAt.Format("Mon Jan _2 15:04:05 2006")
+
     payloadEmail := struct {
       EmailOrder   []EmailOrder
     }{
@@ -464,6 +466,8 @@ func signupAction(w http.ResponseWriter, r *http.Request) {
   pw := gosecrets.GeneratePassword()
   user_uuid := uuid.New().String()
 
+  var users []user
+
   r.ParseForm()
 
   payload := struct {
@@ -547,7 +551,24 @@ func signupAction(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	viewRender.Text(w, http.StatusOK, "Success!")
+  if err := dbConn.db.Find(&users).Scan(&users).Error; err != nil {
+
+    log.Println("Error with retrieving user: ", err)
+    viewRender.Text(w, http.StatusOK, "Error! Retrieving users list.")
+
+  }
+
+  new_payload := struct {
+    Message      string
+    U            []user
+    RemoveBy     string
+  }{
+    U: 			      users,
+    Message:     "Success! User has been added!",
+    RemoveBy:    user_uuid,
+  }
+
+  viewRender.JSON(w, http.StatusOK, new_payload)
 
 }
 
@@ -615,6 +636,36 @@ func restoreUser ( w http.ResponseWriter, r *http.Request ){
     U: 			      u,
     Message:     "Store Restored",
     RemoveBy:    user_uuid,
+  }
+
+  viewRender.JSON(w, http.StatusOK, payload)
+
+}
+
+func updateRole ( w http.ResponseWriter, r *http.Request ){
+
+  var u user
+
+  decoder := json.NewDecoder(r.Body)
+
+  err := decoder.Decode(&u)
+  if err != nil {
+      panic(err)
+  }
+
+  if err :=  dbConn.db.Exec("UPDATE inventory.users SET role = ? WHERE username = ?", u.Role, u.Username).Error; err != nil {
+
+    log.Println("Error with deleting user: ", err)
+    viewRender.Text(w, http.StatusOK, "Error! Updating user.")
+
+  }
+
+  payload := struct {
+    Message      string
+    User         string
+  }{
+    User: 			      u.Role,
+    Message:     "User Updated!",
   }
 
   viewRender.JSON(w, http.StatusOK, payload)

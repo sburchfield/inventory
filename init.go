@@ -47,13 +47,32 @@ func init() {
 	envVars.init()
 
 	muxRouter = mux.NewRouter()
-	secureMuxRouter = mux.NewRouter()
+
+	adminMuxRouter = mux.NewRouter()
+	webMuxRouter = mux.NewRouter()
+	apiMuxRouter = mux.NewRouter()
+	
 	muxRouter.PathPrefix("/admin").Handler(negroni.New(
 		negroni.NewLogger(),
 		negroni.NewRecovery(),
-		negroni.HandlerFunc(authentication),
-		negroni.Wrap(secureMuxRouter),
+		negroni.HandlerFunc(checkAdmin),
+		negroni.Wrap(adminMuxRouter),
 	))
+
+	muxRouter.PathPrefix("/home").Handler(negroni.New(
+		negroni.NewLogger(),
+		negroni.NewRecovery(),
+		negroni.HandlerFunc(checkUser),
+		negroni.Wrap(webMuxRouter),
+	))
+
+	muxRouter.PathPrefix("/api").Handler(negroni.New(
+		negroni.NewLogger(),
+		negroni.NewRecovery(),
+		negroni.HandlerFunc(checkUser),
+		negroni.Wrap(apiMuxRouter),
+	))
+
 
 	defineRoutes()
 	setupRender()

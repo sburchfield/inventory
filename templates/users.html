@@ -25,7 +25,11 @@
 							</div>
 							<div class="form-group">
 								<label class="sr-only" for="role">Role</label>
-								<input type="text" class="form-control" id="role" name="role" placeholder="Role">
+								<select id="role" name="role">
+									<option value="" style="color: #999;" disabled selected>Role</option>
+									<option value="user">User</option>
+									<option value="admin">Admin</option>
+								</select>
 							</div>
 							<button type="submit" class="btn btn-primary">Submit</button>
 						</form>
@@ -49,10 +53,16 @@
             <tbody>
               {{ range .Users }}
                 <tr>
-                    <td>{{ .Username }}</td>
+                    <td class="username">{{ .Username }}</td>
 										<td>{{ .FirstName }}</td>
 										<td>{{ .LastName }}</td>
-                    <td>{{ .Role }}</td>
+                    <td>
+											<select name="update_role" class="update_role">
+												<option value="{{ .Role }}">{{ .Role }}</option>
+												<option value="user">User</option>
+												<option value="admin">Admin</option>
+											</select>
+										</td>
                     <td><button id="{{ .UserUuid }}" class="btn btn-danger remove">Remove</button></td>
                 </tr>
               {{ end }}

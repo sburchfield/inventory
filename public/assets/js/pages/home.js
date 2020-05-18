@@ -6,7 +6,7 @@ $(document).ready( function () {
 
   $.ajax({
     method: "GET",
-    url: "http://localhost:3000/select/stores"
+    url: "http://localhost:3000/api/select/stores"
   })
   .done(function( data ) {
 
@@ -30,7 +30,7 @@ $(document).ready( function () {
 
   $.ajax({
     method: "GET",
-    url: "http://localhost:3000/select/items"
+    url: "http://localhost:3000/api/select/items"
   })
   .done(function( data ) {
 
@@ -52,9 +52,9 @@ $(document).ready( function () {
 
     divArray.forEach( element => {
       html = `
-          <div class="col-md-6 itemsWrapper">
+          <div class="col-md-12 itemsWrapper">
           <h3>`+element.replace(/_/g, " ")+`</h3>
-            <div class="row" id=`+element+`></div>
+            <div id=`+element+`></div>
           </div>
       `
       $("#itemsGroup").append(html)
@@ -63,9 +63,9 @@ $(document).ready( function () {
     items.forEach(element => {
 
       html = `
-              <div class="col-md-6">
-                <label>`+element.ItemName+`</label>
-                <input class="form-control" name="`+element.ID+`" type="number">
+              <div class="row form-group">
+                <label class="col-md-3">`+element.ItemName+`</label>
+                <input class="form-control col-md-3" name="`+element.ID+`" type="number">
               </div>
              `
       $("#"+element.Category.replace(/ /g, "_")).append(html)
@@ -94,7 +94,7 @@ $(document).ready( function () {
 
     data = data.map(function(obj) {
         obj['ItemId'] = obj['name']; // Assign new key
-        obj['Amount'] = obj['value']; // Assign new key
+        obj['Amount'] = parseInt(obj['value']); // Assign new key
         delete obj['name']; // Delete old key
         delete obj['value']; // Delete old key
         return obj;
@@ -109,14 +109,15 @@ $(document).ready( function () {
       element.StoreId = store
     })
 
-    // console.log(data);
+    let newData = data.filter(value => isNaN(value.Amount) === false)
+    console.log(newData);
 
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/updateOrders",
+      url: "http://localhost:3000/api/updateOrders",
       contentType: "application/json",
       dataType: "text",
-      data: JSON.stringify(data)
+      data: JSON.stringify(newData)
     })
     .done(function( data ) {
       console.log(data);

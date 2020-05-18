@@ -10,7 +10,7 @@ $(document).ready( function () {
 
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/updateItems",
+      url: "http://localhost:3000/api/updateItems",
       data: data
     }).done(function( data ) {
         $("#responseMessage").empty()
@@ -43,7 +43,7 @@ $(document).ready( function () {
 
     $.ajax({
       method: "GET",
-      url: "http://localhost:3000/removeItem/"+ item_id,
+      url: "http://localhost:3000/api/removeItem/"+ item_id,
     }).done(function( data ) {
 
         deletedItemsTable.clear()
@@ -77,7 +77,7 @@ $(document).ready( function () {
 
       $.ajax({
         method: "GET",
-        url: "http://localhost:3000/restoreItem/"+ item_id[1],
+        url: "http://localhost:3000/api/restoreItem/"+ item_id[1],
       }).done(function( data ) {
         currentItemsTable.clear()
 

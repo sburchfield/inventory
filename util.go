@@ -15,6 +15,13 @@ func handleCriticalError(err error) {
 
   }
 
+func handleLoginError(w http.ResponseWriter, r *http.Request){
+
+  http.Redirect(w, r, "/login", 302)
+  return
+
+}
+
 func isSessionActive(session *sessions.Session) bool {
 
 	if session.Values["active"] == "on" {

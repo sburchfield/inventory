@@ -73,7 +73,7 @@ func loginAction(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	http.Redirect(w, r, "/home", 303)
+	http.Redirect(w, r, "/", 303)
   // viewRender.HTML(w, http.StatusOK, "<p>Logged In</p>", "")
 
 }
@@ -105,40 +105,59 @@ func pwResetCheck(pwResetStatus string) bool {
 
 }
 
-func authentication(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func checkUser(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+
 
 	session, err := sessCookieStore.Get(r, "inventory-session")
 	if err != nil {
-
-		handleCriticalError(err)
-		viewRender.Text(w, http.StatusInternalServerError, "Invalid credentials, please try again.")
+		handleLoginError(w, r)
 		return
-
 	}
 
+  if !isSessionActive(session) {
+    handleLoginError(w, r)
+    return
+  }
+
   val := session.Values["user"]
-	// role := session.Values["user"].(string)
+
+   // var u = &user{}
+   _, ok := val.(*user)
+   if ok != true{
+     handleLoginError(w, r)
+     return
+   }
+
+	next(w, r)
+
+}
+
+func checkAdmin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+
+
+	session, err := sessCookieStore.Get(r, "inventory-session")
+	if err != nil {
+		handleLoginError(w, r)
+		return
+	}
+
+  if !isSessionActive(session) {
+    handleLoginError(w, r)
+    return
+  }
+
+  val := session.Values["user"]
 
    var u = &user{}
    u, ok := val.(*user)
    if ok != true{
-       // Handle the case that it's not an expected type
-       log.Println(err)
-   		 viewRender.Text(w, http.StatusInternalServerError, "Invalid credentials, please try again.")
-
+     handleLoginError(w, r)
+     return
    }
 
 	if u.Role != "admin" {
-
-    payload := struct {
-      ErrMsg      string
-    }{
-      ErrMsg:      "Invalid credentials, please try again.",
-    }
-
-		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
-		return
-
+    handleLoginError(w, r)
+    return
 	}
 
 	next(w, r)

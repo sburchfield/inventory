@@ -96,7 +96,7 @@ func (Categories) TableName() string {
 type Orders struct{
   gorm.Model
   ItemId   string `gorm:"column:item_id"`
-  Amount   string `gorm:"column:amount"`
+  Amount   *int `gorm:"column:amount"`
   UserUuid   string `gorm:"column:user_uuid"`
   StoreId  string   `gorm:"column:store_id"`
 }
@@ -110,6 +110,7 @@ func (Orders) TableName() string {
 
 type EmailOrder struct {
   CreatedAt  *time.Time
+  UpdatedAt  *time.Time
   ItemName   string
   Amount     string
   StoreName  string

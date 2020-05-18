@@ -16,22 +16,22 @@ $(document).ready( function () {
 
       console.log(data);
 
-        // $("#responseMessage").empty()
-        // $("#responseMessage").append('<h5 class="animated fadeOut">'+data.Message+'</h5>');
-        //
-        // currentCategoriesTable.clear()
-        //
-        // data.Categories.forEach(function(value){
-        //
-        //   let rmvButton = '<td><button id="'+value.ID+'" class="btn btn-danger remove">Remove</button></td>'
-        //
-        //   let array = [value.ID, value.Category, value.Description, rmvButton]
-        //
-        //   $('#currentCategories').DataTable().row.add(array).draw()
-        //
-        //     $("#categoriesForm")[0].reset()
-        //
-        // })
+        $("#responseMessage").empty()
+        $("#responseMessage").append('<h5 class="animated fadeOut">'+data.Message+'</h5>');
+
+        currentUsersTable.clear()
+
+        data.U.forEach(function(value){
+
+          let rmvButton = '<td><button id="'+value.User_Uuid+'" class="btn btn-danger remove">Remove</button></td>'
+
+          let array = [value.Username, value.FirstName, value.LastName, value.Role, rmvButton]
+
+          $('#currentUsers').DataTable().row.add(array).draw()
+
+            $("#usersForm")[0].reset()
+
+        })
 
 
 
@@ -149,6 +149,48 @@ $(document).ready( function () {
 
 
       })
+
+
+  $(document).on("change", ".update_role", function(){
+
+    let select = $(this);
+
+    let username = $(this).parents('tr').find(".username").html();
+    let update_role = select.val();
+
+    let data = { "username": username, "role": update_role }
+
+    bootbox.confirm({
+        title: "Update User Role?",
+        message: "Doing this will give " + username + " a " + update_role +" account",
+        buttons: {
+            cancel: {
+                label: '<i class="fa fa-times"></i> Cancel'
+            },
+            confirm: {
+                label: '<i class="fa fa-check"></i> Confirm'
+            }
+        },
+        callback: function (result) {
+
+          if(result){
+            $.ajax({
+              method: "POST",
+              url: "http://localhost:3000/updateRole",
+              contentType: "application/json",
+              dataType: "text",
+              data: JSON.stringify(data)
+            }).done(function( data ) {
+              console.log(data);
+            }).catch(function(err){
+              console.log(err);
+            })
+          }else{
+            select.prop('selectedIndex',0);
+          }
+        }
+  })
+  })
 
 
 });//end of doc ready
