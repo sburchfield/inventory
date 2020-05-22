@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -58,10 +57,10 @@ func updateOrders(w http.ResponseWriter, r *http.Request) {
 
 	getOrderEmail := queries["getOrderEmail"]
 
-	now := time.Now()
-	then := now.AddDate(0, 0, -12)
+	// now := time.Now()
+	// then := now.AddDate(0, 0, -12)
 
-	if err := dbConn.db.Raw(getOrderEmail, then, now, orders[0].UserUUID).Scan(&emailOrder); err != nil {
+	if err := dbConn.db.Raw(getOrderEmail, orders[0].UserUUID).Scan(&emailOrder); err != nil {
 		log.Println(err)
 	}
 

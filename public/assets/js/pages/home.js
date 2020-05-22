@@ -64,6 +64,7 @@ function getLatestOrders(user_uuid){
 
     let items = data.Items
     let html;
+    let user= $("#user").val();
 
     let categoryArray = []
     let divArray = []
@@ -97,7 +98,7 @@ function getLatestOrders(user_uuid){
       $("#"+element.Category.replace(/ /g, "_")).append(html)
     });
 
-    getLatestOrders('88040ec0-460b-428c-8cd9-d08fc8c46468')
+    getLatestOrders(user)
 
   })
   .fail(function( err ){

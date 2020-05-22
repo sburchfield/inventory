@@ -18,13 +18,17 @@ var queries = map[string]string{
                     SET status = 'reset', password_reset_hash = ?, reset_time = ?
                     WHERE username = ?;`,
 
-	"getOrderEmail": `select orders.created_at, orders.updated_at, orders.amount, items.item_name, users.first_name, users.last_name, stores.store_name
+	"getOrderEmail": `select DISTINCT ON (item_id) orders.created_at, orders.updated_at, orders.amount, items.item_name, users.first_name, users.last_name, stores.store_name
                     from inventory.orders
                     inner join inventory.items on orders.item_id = items.id
                     inner join inventory.users on orders.user_uuid = users.user_uuid
                     inner join inventory.stores on orders.store_id = stores.id
-                    where orders.created_at between ? and ?
-                    and orders.user_uuid = ?;`,
+                    where orders.created_at > to_timestamp(concat(current_date , ' 08:00:00'), 'YYYY-MM-DD hh24:mi:ss')
+										and orders.created_at < to_timestamp(concat(current_date , ' 23:59:59'), 'YYYY-MM-DD hh24:mi:ss')
+                    and orders.user_uuid = ?
+										ORDER BY
+												item_id,
+												updated_at DESC;`,
 
 	"getLatestOrders": `
 											SELECT DISTINCT ON (item_id)
