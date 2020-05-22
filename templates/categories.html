@@ -1,13 +1,7 @@
-{{template "head"}}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
-</head>
-<body>
-
-		{{ partial "nav" }}
 
 		<main class="container">
-			<div class="row">
-				<div class="card" style="width: 100%;">
+			<div class="row justify-content-around">
+				<div class="col-2 card" style="width: 100%;">
 					<div id="responseMessage"></div>
 					 <div class="card-body">
 						<form id="categoriesForm" class="form-inline justify-content-around align-items-center">
@@ -23,64 +17,65 @@
 						</form>
 						</div>
 				</div>
-			</div>
-			<div class="row justify-content-center">
-					<div class="card" style="width: 100%;">
-						<h3>Current Categories</h3>
-					<div class="card-body">
-          <table id="currentCategories" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-										<th>Category</th>
-                    <th>Description</th>
-                    <th>Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-              {{ range .Categories }}
-                <tr>
-                    <td>{{ .ID }}</td>
-										<td>{{ .Category }}</td>
-                    <td>{{ .Description }}</td>
-                    <td><button id="{{ .ID }}" class="btn btn-danger remove">Remove</button></td>
-                </tr>
-              {{ end }}
-            </tbody>
-          </table>
+				<div class="col-9">
+					<div class="row justify-content-center">
+							<div class="card table-card" style="width: 100%;">
+								<h3 class="text-center">Current Categories</h3>
+							<div class="card-body">
+							<table id="currentCategories" class="display" style="width:100%">
+								<thead>
+										<tr>
+												<th>ID</th>
+												<th>Category</th>
+												<th>Description</th>
+												<th>Remove</th>
+										</tr>
+								</thead>
+								<tbody>
+									{{ range .Categories }}
+										<tr>
+												<td>{{ .ID }}</td>
+												<td>{{ .Category }}</td>
+												<td>{{ .Description }}</td>
+												<td><button id="{{ .ID }}" class="btn btn-danger remove">Remove</button></td>
+										</tr>
+									{{ end }}
+								</tbody>
+							</table>
+							</div>
 					</div>
-      </div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="card table-card" style="width:100%;">
+							<h3 class="text-center">Current Categories</h3>
+						<div class="card-body">
+						<table id="deletedCategories" class="display" style="width:100%">
+							<thead>
+									<tr>
+											<th>ID</th>
+											<th>Category</th>
+											<th>Description</th>
+											<th>Restore</th>
+									</tr>
+							</thead>
+							<tbody>
+								{{ range .DeletedCategories }}
+									<tr>
+											<td>{{ .ID }}</td>
+											<td>{{ .Category }}</td>
+											<td>{{ .Description }}</td>
+											<td><button id="deleted_{{ .ID }}" class="btn btn-success restore">Restore</button></td>
+									</tr>
+								{{ end }}
+							</tbody>
+						</table>
+						</div>
+						</div>
+					</div>
+				</div>
 			</div>
-      <div class="row justify-content-center">
-				<div class="card" style="width:100%;">
-				<div class="card-body">
-        <table id="deletedCategories" class="display" style="width:100%">
-          <thead>
-              <tr>
-                  <th>ID</th>
-									<th>Category</th>
-                  <th>Description</th>
-                  <th>Restore</th>
-              </tr>
-          </thead>
-          <tbody>
-            {{ range .DeletedCategories }}
-              <tr>
-                  <td>{{ .ID }}</td>
-									<td>{{ .Category }}</td>
-                  <td>{{ .Description }}</td>
-                  <td><button id="deleted_{{ .ID }}" class="btn btn-success restore">Restore</button></td>
-              </tr>
-            {{ end }}
-          </tbody>
-        </table>
-				</div>
-				</div>
-      </div>
 		</main>
-{{template "tail"}}
+
 <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.3/bootbox.min.js"></script>
 <script src="/assets/js/pages/categories.js"></script>
-</body>
-</html>

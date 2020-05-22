@@ -176,7 +176,7 @@ $(document).ready( function () {
           if(result){
             $.ajax({
               method: "POST",
-              url: "http://localhost:3000/updateRole",
+              url: "http://localhost:3000/api/updateRole",
               contentType: "application/json",
               dataType: "text",
               data: JSON.stringify(data)

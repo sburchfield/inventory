@@ -1,16 +1,10 @@
-{{template "head"}}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
-</head>
-<body>
-
-		{{ partial "nav" }}
 
 		<main class="container">
-			<div class="row">
-				<div class="card" style="width: 100%;">
+			<div class="row justify-content-around">
+				<div class="col-2 card" style="width: 100%;">
 					<div id="responseMessage"></div>
 					 <div class="card-body">
-						<form id="storesForm" class="form-inline justify-content-around align-items-center">
+						<form id="storesForm" class="justify-content-around align-items-center">
 							<div class="form-group">
 								<label class="sr-only" for="item_name">Store Name</label>
 								<input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name">
@@ -92,79 +86,79 @@
 						</form>
 						</div>
 				</div>
-			</div>
-			<div class="row justify-content-center">
-					<div class="card" style="width: 100%;">
-						<h3>Current Stores</h3>
-					<div class="card-body">
-          <table id="currentStores" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Store Name</th>
-                    <th>Address</th>
+				<div class="col-9">
+					<div class="row justify-content-center">
+							<div class="card table-card" style="width: 100%;">
+								<h3 class="text-center">Current Stores</h3>
+							<div class="card-body">
+							<table id="currentStores" class="display" style="width:100%">
+								<thead>
+										<tr>
+												<th>ID</th>
+												<th>Store Name</th>
+												<th>Address</th>
+												<th>Phone Number</th>
+												<th>City</th>
+												<th>State</th>
+												<th>Zip Code</th>
+												<th>Remove</th>
+										</tr>
+								</thead>
+								<tbody>
+									{{ range .Stores }}
+										<tr>
+												<td>{{ .ID }}</td>
+												<td>{{ .StoreName }}</td>
+												<td>{{ .Address }}</td>
+												<td>{{ .PhoneNumber }}</td>
+												<td>{{ .City }}</td>
+												<td>{{ .State }}</td>
+												<td>{{ .ZipCode }}</td>
+												<td><button id="{{ .ID }}" class="btn btn-danger remove">Remove</button></td>
+										</tr>
+									{{ end }}
+								</tbody>
+							</table>
+							</div>
+					</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="card table-card" style="width:100%;">
+							<h3 class="text-center">Old Stores</h3>
+						<div class="card-body">
+						<table id="deletedStores" class="display" style="width:100%">
+							<thead>
+									<tr>
+										<th>ID</th>
+										<th>Store Name</th>
+										<th>Address</th>
 										<th>Phone Number</th>
 										<th>City</th>
 										<th>State</th>
-                    <th>Zip Code</th>
+										<th>Zip Code</th>
 										<th>Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-              {{ range .Stores }}
-                <tr>
-                    <td>{{ .ID }}</td>
-                    <td>{{ .StoreName }}</td>
-                    <td>{{ .Address }}</td>
-										<td>{{ .PhoneNumber }}</td>
-										<td>{{ .City }}</td>
-										<td>{{ .State }}</td>
-                    <td>{{ .ZipCode }}</td>
-                    <td><button id="{{ .ID }}" class="btn btn-danger remove">Remove</button></td>
-                </tr>
-              {{ end }}
-            </tbody>
-          </table>
+									</tr>
+							</thead>
+							<tbody>
+								{{ range .DeletedStores }}
+									<tr>
+											<td>{{ .ID }}</td>
+											<td>{{ .StoreName }}</td>
+											<td>{{ .Address }}</td>
+											<td>{{ .PhoneNumber }}</td>
+											<td>{{ .City }}</td>
+											<td>{{ .State }}</td>
+											<td>{{ .ZipCode }}</td>
+											<td><button id="deleted_{{ .ID }}" class="btn btn-success restore">Restore</button></td>
+									</tr>
+								{{ end }}
+							</tbody>
+						</table>
+						</div>
+						</div>
 					</div>
-      </div>
+				</div>
 			</div>
-      <div class="row justify-content-center">
-				<div class="card" style="width:100%;">
-				<div class="card-body">
-        <table id="deletedStores" class="display" style="width:100%">
-          <thead>
-              <tr>
-								<th>ID</th>
-								<th>Store Name</th>
-								<th>Address</th>
-								<th>Phone Number</th>
-								<th>City</th>
-								<th>State</th>
-								<th>Zip Code</th>
-								<th>Remove</th>
-              </tr>
-          </thead>
-          <tbody>
-            {{ range .DeletedStores }}
-              <tr>
-									<td>{{ .ID }}</td>
-									<td>{{ .StoreName }}</td>
-									<td>{{ .Address }}</td>
-									<td>{{ .PhoneNumber }}</td>
-									<td>{{ .City }}</td>
-									<td>{{ .State }}</td>
-									<td>{{ .ZipCode }}</td>
-                  <td><button id="deleted_{{ .ID }}" class="btn btn-success restore">Restore</button></td>
-              </tr>
-            {{ end }}
-          </tbody>
-        </table>
-				</div>
-				</div>
-      </div>
 		</main>
-{{template "tail"}}
 <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <script src="/assets/js/pages/stores.js"></script>
-</body>
-</html>

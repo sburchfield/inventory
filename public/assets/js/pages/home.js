@@ -52,9 +52,9 @@ $(document).ready( function () {
 
     divArray.forEach( element => {
       html = `
-          <div class="col-md-12 itemsWrapper">
-          <h3>`+element.replace(/_/g, " ")+`</h3>
-            <div id=`+element+`></div>
+          <div class="col-5 itemsWrapper card">
+          <h3 class="text-center">`+element.replace(/_/g, " ")+`</h3>
+            <div class="row" id=`+element+`></div>
           </div>
       `
       $("#itemsGroup").append(html)
@@ -63,9 +63,9 @@ $(document).ready( function () {
     items.forEach(element => {
 
       html = `
-              <div class="row form-group">
-                <label class="col-md-3">`+element.ItemName+`</label>
-                <input class="form-control col-md-3" name="`+element.ID+`" type="number">
+              <div class="col-6 form-group">
+                <label class="item-label" for="`+element.ID+`">`+element.ItemName+`</label>
+                <input class="form-control item-input" name="`+element.ID+`" type="number">
               </div>
              `
       $("#"+element.Category.replace(/ /g, "_")).append(html)
@@ -110,7 +110,9 @@ $(document).ready( function () {
     })
 
     let newData = data.filter(value => isNaN(value.Amount) === false)
-    console.log(newData);
+    // console.log(newData);
+
+    $("html, body").animate({ scrollTop: 0 }, "slow");
 
     $.ajax({
       method: "POST",
@@ -131,11 +133,6 @@ $(document).ready( function () {
 
     })
 
-
-  })
-
-
-  $("#next").click(function(){
 
   })
 

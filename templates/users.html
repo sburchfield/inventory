@@ -1,19 +1,13 @@
-{{template "head"}}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
-</head>
-<body>
-
-		{{ partial "nav" }}
 
 		<main class="container">
-			<div class="row">
-				<div class="card" style="width: 100%;">
+			<div class="row justify-content-around">
+				<div class="col-2 card" style="width: 100%;">
 					<div id="responseMessage"></div>
 					 <div class="card-body">
 						<form id="usersForm" class="form-inline justify-content-around align-items-center">
 							<div class="form-group">
-								<label class="sr-only" for="username">Username</label>
-								<input type="email" class="form-control" id="username" name="username" placeholder="Username">
+								<label class="sr-only" for="username">Email</label>
+								<input type="email" class="form-control" id="username" name="username" placeholder="Email">
 							</div>
 							<div class="form-group">
 								<label class="sr-only" for="first_name">First Name</label>
@@ -25,7 +19,7 @@
 							</div>
 							<div class="form-group">
 								<label class="sr-only" for="role">Role</label>
-								<select id="role" name="role">
+								<select class="form-control" id="role" name="role">
 									<option value="" style="color: #999;" disabled selected>Role</option>
 									<option value="user">User</option>
 									<option value="admin">Admin</option>
@@ -35,74 +29,74 @@
 						</form>
 						</div>
 				</div>
-			</div>
-			<div class="row justify-content-center">
-					<div class="card" style="width: 100%;">
-						<h3>Current Users</h3>
-					<div class="card-body">
-          <table id="currentUsers" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Username</th>
-										<th>First Name</th>
-										<th>Last Name</th>
-                    <th>Role</th>
-                    <th>Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-              {{ range .Users }}
-                <tr>
-                    <td class="username">{{ .Username }}</td>
-										<td>{{ .FirstName }}</td>
-										<td>{{ .LastName }}</td>
-                    <td>
-											<select name="update_role" class="update_role">
-												<option value="{{ .Role }}">{{ .Role }}</option>
-												<option value="user">User</option>
-												<option value="admin">Admin</option>
-											</select>
-										</td>
-                    <td><button id="{{ .UserUuid }}" class="btn btn-danger remove">Remove</button></td>
-                </tr>
-              {{ end }}
-            </tbody>
-          </table>
+				<div class="col-9">
+					<div class="row justify-content-center">
+							<div class="card table-card" style="width: 100%;">
+								<h3 class="text-center">Current Users</h3>
+							<div class="card-body">
+							<table id="currentUsers" class="display" style="width:100%">
+								<thead>
+										<tr>
+												<th>Username</th>
+												<th>First Name</th>
+												<th>Last Name</th>
+												<th>Role</th>
+												<th>Remove</th>
+										</tr>
+								</thead>
+								<tbody>
+									{{ range .Users }}
+										<tr>
+												<td class="username">{{ .Username }}</td>
+												<td>{{ .FirstName }}</td>
+												<td>{{ .LastName }}</td>
+												<td>
+													<select name="update_role" class="update_role">
+														<option value="{{ .Role }}">{{ .Role }}</option>
+														<option value="user">User</option>
+														<option value="admin">Admin</option>
+													</select>
+												</td>
+												<td><button id="{{ .UserUuid }}" class="btn btn-danger remove">Remove</button></td>
+										</tr>
+									{{ end }}
+								</tbody>
+							</table>
+							</div>
 					</div>
-      </div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="card" style="width:100%;">
+							<h3 class="text-center">Old Users</h3>
+						<div class="card-body">
+						<table id="deletedUsers" class="display" style="width:100%">
+							<thead>
+									<tr>
+											<th>Username</th>
+											<th>First Name</th>
+											<th>Last Name</th>
+											<th>Role</th>
+											<th>Remove</th>
+									</tr>
+							</thead>
+							<tbody>
+								{{ range .DeletedUsers }}
+									<tr>
+											<td>{{ .Username }}</td>
+											<td>{{ .FirstName }}</td>
+											<td>{{ .LastName }}</td>
+											<td>{{ .Role}}</td>
+											<td><button id="deleted_{{ .UserUuid }}" class="btn btn-success restore">Restore</button></td>
+									</tr>
+								{{ end }}
+							</tbody>
+						</table>
+						</div>
+						</div>
+					</div>
+				</div>
 			</div>
-      <div class="row justify-content-center">
-				<div class="card" style="width:100%;">
-				<div class="card-body">
-        <table id="deletedUsers" class="display" style="width:100%">
-					<thead>
-							<tr>
-									<th>Username</th>
-									<th>First Name</th>
-									<th>Last Name</th>
-									<th>Role</th>
-									<th>Remove</th>
-							</tr>
-					</thead>
-					<tbody>
-						{{ range .DeletedUsers }}
-							<tr>
-									<td>{{ .Username }}</td>
-									<td>{{ .FirstName }}</td>
-									<td>{{ .LastName }}</td>
-									<td>{{ .Role}}</td>
-									<td><button id="deleted_{{ .UserUuid }}" class="btn btn-success restore">Restore</button></td>
-							</tr>
-						{{ end }}
-					</tbody>
-        </table>
-				</div>
-				</div>
-      </div>
 		</main>
-{{template "tail"}}
 <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.3/bootbox.min.js"></script>
 <script src="/assets/js/pages/users.js"></script>
-</body>
-</html>

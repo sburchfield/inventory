@@ -318,7 +318,9 @@ for i := range orders {
       log.Println(err)
     }
 
-    // emailOrder.UpdatedAt = emailOrder.UpdatedAt.Format("Mon Jan _2 15:04:05 2006")
+    for i := range emailOrder {
+      emailOrder[i].FormatTime = emailOrder[i].UpdatedAt.Format("Mon Jan _2 15:04:05 2006")
+    }
 
     payloadEmail := struct {
       EmailOrder   []EmailOrder

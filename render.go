@@ -15,7 +15,7 @@ var noLayout = render.HTMLOptions{
 func setupRender() {
 
 	viewRender = render.New(render.Options{
-		Layout: "components/nav",
+		Layout: "layout",
 		Extensions: []string{
 			".html",
 		},
