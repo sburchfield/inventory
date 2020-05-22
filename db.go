@@ -1,13 +1,12 @@
-
 package main
 
 import (
-  "log"
-  "fmt"
+	"fmt"
+	"log"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
-
 
 // DBConnection holds the global DB connection
 type dbConnection struct {
@@ -21,17 +20,16 @@ var dbConn dbConnection
 func (dbc *dbConnection) initDB() {
 
 	conn := "host=" + envVars.dbHost +
-          " user=" + envVars.dbUsername +
-          " dbname=" + envVars.dbName +
-          " sslmode=" + envVars.dbSSLMode +
-          " password=" + envVars.dbPassword
+		" user=" + envVars.dbUsername +
+		" dbname=" + envVars.dbName +
+		" sslmode=" + envVars.dbSSLMode +
+		" password=" + envVars.dbPassword
 
 	var err error
 
-
 	dbc.db, err = gorm.Open("postgres", conn)
 	if err != nil {
-		log.Fatal("Error connecting to database, %v", err)
+		log.Fatalf("Error connecting to database, %v", err)
 	}
 
 	fmt.Println("DB connected successfully")
@@ -44,4 +42,3 @@ func (dbc *dbConnection) close() error {
 	return dbc.db.Close()
 
 }
-

@@ -52,7 +52,7 @@ $(document).ready( function () {
 
     divArray.forEach( element => {
       html = `
-          <div class="col-5 itemsWrapper card">
+          <div class="col-lg-5 itemsWrapper card">
           <h3 class="text-center">`+element.replace(/_/g, " ")+`</h3>
             <div class="row" id=`+element+`></div>
           </div>
@@ -122,9 +122,9 @@ $(document).ready( function () {
       data: JSON.stringify(newData)
     })
     .done(function( data ) {
-      console.log(data);
 
-      $("#response").html(data)
+      $('#responseModal').modal()
+      $("#responseMessage").html(data)
 
     })
     .fail(function( err ){

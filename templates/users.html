@@ -57,7 +57,7 @@
 														<option value="admin">Admin</option>
 													</select>
 												</td>
-												<td><button id="{{ .UserUuid }}" class="btn btn-danger remove">Remove</button></td>
+												<td><button id="{{ .UserUUID }}" class="btn btn-danger remove">Remove</button></td>
 										</tr>
 									{{ end }}
 								</tbody>
@@ -86,7 +86,7 @@
 											<td>{{ .FirstName }}</td>
 											<td>{{ .LastName }}</td>
 											<td>{{ .Role}}</td>
-											<td><button id="deleted_{{ .UserUuid }}" class="btn btn-success restore">Restore</button></td>
+											<td><button id="deleted_{{ .UserUUID }}" class="btn btn-success restore">Restore</button></td>
 									</tr>
 								{{ end }}
 							</tbody>

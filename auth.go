@@ -1,17 +1,17 @@
-
 package main
 
-import(
-  "net/http"
-  // "strings"
-  "log"
-  "strconv"
-  "time"
+import (
+	"net/http"
+	// "strings"
+	"log"
+	"strconv"
+	"time"
 
-  // "github.com/badoux/checkmail"
-  "gnardex/gosecrets"
-  "github.com/gorilla/mux"
-  "github.com/google/uuid"
+	// "github.com/badoux/checkmail"
+	"gnardex/gosecrets"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func login(w http.ResponseWriter, r *http.Request) {
@@ -21,49 +21,49 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-  payload := struct {
-    ErrMsg      string
-  }{
-    ErrMsg:      "",
-  }
+	payload := struct {
+		ErrMsg string
+	}{
+		ErrMsg: "",
+	}
 
 	viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 }
 
 func loginAction(w http.ResponseWriter, r *http.Request) {
 
-  var u user
+	var u user
 
-  un := r.FormValue("username")
-  pw := r.FormValue("password")
+	un := r.FormValue("username")
+	pw := r.FormValue("password")
 
-  if err := dbConn.db.Where("status = ? AND username = ?", "active", un).First(&u).Error; err != nil {
+	if err := dbConn.db.Where("status = ? AND username = ?", "active", un).First(&u).Error; err != nil {
 
-    payload := struct {
-      ErrMsg      string
-    }{
-      ErrMsg:      "Password reset has been requested. Please follow the email sent to your address. If you did not request a Password Reset please contact support@pyaanalytics.com",
-    }
-    viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
-    return
+		payload := struct {
+			ErrMsg string
+		}{
+			ErrMsg: "Password reset has been requested. Please follow the email sent to your address. If you did not request a Password Reset please contact support@pyaanalytics.com",
+		}
+		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
+		return
 
-  }
+	}
 
 	found, u := auth(un, pw)
 	if !found {
 
-    log.Println("username and pw not found")
+		log.Println("username and pw not found")
 		payload := struct {
-			ErrMsg      string
+			ErrMsg string
 		}{
-			ErrMsg:      "Invalid username or password.",
+			ErrMsg: "Invalid username or password.",
 		}
 		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 		return
 	}
 
 	session, _ := sessCookieStore.Get(r, "inventory-session")
-  session.Values["active"] = "on"
+	session.Values["active"] = "on"
 	session.Values["user"] = u
 
 	if err := session.Save(r, w); err != nil {
@@ -74,7 +74,7 @@ func loginAction(w http.ResponseWriter, r *http.Request) {
 
 	}
 	http.Redirect(w, r, "/", 303)
-  // viewRender.HTML(w, http.StatusOK, "<p>Logged In</p>", "")
+	// viewRender.HTML(w, http.StatusOK, "<p>Logged In</p>", "")
 
 }
 
@@ -107,26 +107,25 @@ func pwResetCheck(pwResetStatus string) bool {
 
 func checkUser(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
-
 	session, err := sessCookieStore.Get(r, "inventory-session")
 	if err != nil {
 		handleLoginError(w, r)
 		return
 	}
 
-  if !isSessionActive(session) {
-    handleLoginError(w, r)
-    return
-  }
+	if !isSessionActive(session) {
+		handleLoginError(w, r)
+		return
+	}
 
-  val := session.Values["user"]
+	val := session.Values["user"]
 
-   // var u = &user{}
-   _, ok := val.(*user)
-   if ok != true{
-     handleLoginError(w, r)
-     return
-   }
+	// var u = &user{}
+	_, ok := val.(*user)
+	if ok != true {
+		handleLoginError(w, r)
+		return
+	}
 
 	next(w, r)
 
@@ -134,30 +133,29 @@ func checkUser(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 func checkAdmin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
-
 	session, err := sessCookieStore.Get(r, "inventory-session")
 	if err != nil {
 		handleLoginError(w, r)
 		return
 	}
 
-  if !isSessionActive(session) {
-    handleLoginError(w, r)
-    return
-  }
+	if !isSessionActive(session) {
+		handleLoginError(w, r)
+		return
+	}
 
-  val := session.Values["user"]
+	val := session.Values["user"]
 
-   var u = &user{}
-   u, ok := val.(*user)
-   if ok != true{
-     handleLoginError(w, r)
-     return
-   }
+	var u = &user{}
+	u, ok := val.(*user)
+	if ok != true {
+		handleLoginError(w, r)
+		return
+	}
 
 	if u.Role != "admin" {
-    handleLoginError(w, r)
-    return
+		handleLoginError(w, r)
+		return
 	}
 
 	next(w, r)
@@ -170,7 +168,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-  session.Values["user"] = ""
+	session.Values["user"] = ""
 	session.Values["active"] = ""
 	session.Options.MaxAge = -1
 	if err := session.Save(r, w); err != nil {
@@ -200,11 +198,11 @@ func signup(w http.ResponseWriter, r *http.Request) {
 
 func passwordResetRequest(w http.ResponseWriter, r *http.Request) {
 
-  payload := struct {
-    ErrMsg      string
-  }{
-    ErrMsg:      "",
-  }
+	payload := struct {
+		ErrMsg string
+	}{
+		ErrMsg: "",
+	}
 
 	viewRender.HTML(w, http.StatusOK, "passwordResetRequest", payload, noLayout)
 
@@ -215,18 +213,16 @@ func passwordResetRequestAction(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 
 	payload := struct {
-		ErrMsg      string
+		ErrMsg string
 	}{
-		ErrMsg:      "",
+		ErrMsg: "",
 	}
 
-  var u user
+	var u user
 
-  getUser := queries["getUser"]
+	getUser := queries["getUser"]
 
-  if err := dbConn.db.Raw(getUser, username).Scan(&u).Error;
-
-	err != nil {
+	if err := dbConn.db.Raw(getUser, username).Scan(&u).Error; err != nil {
 
 		payload.ErrMsg = "Username invalid or not found"
 		viewRender.HTML(w, http.StatusOK, "passwordResetRequest", payload, noLayout)
@@ -234,18 +230,18 @@ func passwordResetRequestAction(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-  password_reset_uuid := uuid.New().String()
+	passwordResetUUID := uuid.New().String()
 
-  password_reset_hash, err := gosecrets.GetPasswordHash(password_reset_uuid)
-  if err != nil {
-    log.Println(err)
-    return
-  }
+	passwordResetHash, err := gosecrets.GetPasswordHash(passwordResetUUID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-  requestReset := queries["requestReset"]
+	requestReset := queries["requestReset"]
 
-	if err := dbConn.db.Exec(requestReset, password_reset_hash, time.Now().UTC(), username).Error; err != nil {
-    log.Println(err)
+	if err := dbConn.db.Exec(requestReset, passwordResetHash, time.Now().UTC(), username).Error; err != nil {
+		log.Println(err)
 		payload.ErrMsg = "Password request/Code is invalid"
 		viewRender.HTML(w, http.StatusOK, "passwordResetRequest", payload, noLayout)
 		return
@@ -253,21 +249,21 @@ func passwordResetRequestAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payloadEmail := struct {
-    Username   string
-		UserUuid   string
-		Code       string
-		Route      string
+		Username string
+		UserUUID string
+		Code     string
+		Route    string
 	}{
-    Username:   username,
-		UserUuid:   u.UserUuid,
-		Code:       password_reset_hash,
-		Route:      envVars.appPasswordResetDomain,
+		Username: username,
+		UserUUID: u.UserUUID,
+		Code:     passwordResetHash,
+		Route:    envVars.appPasswordResetDomain,
 	}
 
 	sendPasswordResetEmail(u.UserEmail, payloadEmail)
 
 	payload.ErrMsg = "An email was sent to the email-id on file, please follow the instructions within " +
-	strconv.FormatUint(uint64(envVars.appPasswordResetLinkExpiryTime), 10) + " mintues to reset your password."
+		strconv.FormatUint(uint64(envVars.appPasswordResetLinkExpiryTime), 10) + " mintues to reset your password."
 	viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 
 }
@@ -275,20 +271,20 @@ func passwordResetRequestAction(w http.ResponseWriter, r *http.Request) {
 func passwordReset(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	user_uuid := vars["user_uuid"]
+	userUUID := vars["user_uuid"]
 
 	code := r.URL.Query().Get("code")
 
 	var user user
-	getUserByUuid := queries["getUserByUuid"]
-	if err := dbConn.db.Raw(getUserByUuid, user_uuid).
+	getUserByUUID := queries["getUserByUUID"]
+	if err := dbConn.db.Raw(getUserByUUID, userUUID).
 		Scan(&user).
 		Error; err != nil {
 
 		payload := struct {
-			ErrMsg      string
+			ErrMsg string
 		}{
-			ErrMsg:      "Sorry! Could not process request.",
+			ErrMsg: "Sorry! Could not process request.",
 		}
 		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 		return
@@ -297,11 +293,11 @@ func passwordReset(w http.ResponseWriter, r *http.Request) {
 
 	if user.PasswordResetHash != code {
 
-		log.Println("Invalid Security Code. Attempted Code: %s", code)
+		log.Printf("Invalid Security Code. Attempted Code: %s", code)
 		payload := struct {
-			ErrMsg      string
+			ErrMsg string
 		}{
-			ErrMsg:      "Access Forbidden",
+			ErrMsg: "Access Forbidden",
 		}
 		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 		return
@@ -315,9 +311,9 @@ func passwordReset(w http.ResponseWriter, r *http.Request) {
 
 		log.Print("Link expired")
 		payload := struct {
-			ErrMsg      string
+			ErrMsg string
 		}{
-			ErrMsg:      "Password reset link expired, please request another.",
+			ErrMsg: "Password reset link expired, please request another.",
 		}
 		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 		return
@@ -325,9 +321,9 @@ func passwordReset(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payload := passResetMessage{
-		UserUuid:    user_uuid,
-		Code:        code,
-		Message:     "",
+		UserUUID: userUUID,
+		Code:     code,
+		Message:  "",
 	}
 	viewRender.HTML(w, http.StatusOK, "passwordReset", payload, noLayout)
 
@@ -335,18 +331,18 @@ func passwordReset(w http.ResponseWriter, r *http.Request) {
 
 func passwordResetAction(w http.ResponseWriter, r *http.Request) {
 
-	user_uuid := r.PostFormValue("user_uuid")
-	security_code := r.PostFormValue("securityCode")
-	new_password := r.PostFormValue("newPassword")
-	confirm_password := r.PostFormValue("confirmNewPassword")
+	userUUID := r.PostFormValue("user_uuid")
+	securityCode := r.PostFormValue("securityCode")
+	newPassword := r.PostFormValue("newPassword")
+	confirmPassword := r.PostFormValue("confirmNewPassword")
 
-	if new_password != confirm_password {
+	if newPassword != confirmPassword {
 
 		log.Println("password confimation does not match")
 		payload := passResetMessage{
-			UserUuid:    user_uuid,
-			Code:        security_code,
-			Message:     "New password and confirm password don not match, please try again.",
+			UserUUID: userUUID,
+			Code:     securityCode,
+			Message:  "New password and confirm password don not match, please try again.",
 		}
 		viewRender.HTML(w, http.StatusOK, "passwordReset", payload, noLayout)
 		return
@@ -354,30 +350,30 @@ func passwordResetAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user user
-	getUserByUuid := queries["getUserByUuid"]
-	if err := dbConn.db.Raw(getUserByUuid, user_uuid).
+	getUserByUUID := queries["getUserByUUID"]
+	if err := dbConn.db.Raw(getUserByUUID, userUUID).
 		Scan(&user).
 		Error; err != nil {
 
-    log.Println("Invalid user. Attempted id: %s", user_uuid)
+		log.Printf("Invalid user. Attempted id: %s", userUUID)
 
 		payload := struct {
-			ErrMsg      string
+			ErrMsg string
 		}{
-			ErrMsg:      "Invalid Access!",
+			ErrMsg: "Invalid Access!",
 		}
 		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 		return
 
 	}
 
-	if user.PasswordResetHash != security_code {
+	if user.PasswordResetHash != securityCode {
 
-		log.Println("Invalid Security Code. Attempted Code: %s", security_code)
+		log.Printf("Invalid Security Code. Attempted Code: %s", securityCode)
 		payload := struct {
-			ErrMsg      string
+			ErrMsg string
 		}{
-			ErrMsg:      "Invalid Access!",
+			ErrMsg: "Invalid Access!",
 		}
 		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 		return
@@ -391,35 +387,35 @@ func passwordResetAction(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("Link expired -1")
 		payload := struct {
-			ErrMsg      string
+			ErrMsg string
 		}{
-			ErrMsg:      "Password reset link expired, please reqest a new one.",
+			ErrMsg: "Password reset link expired, please reqest a new one.",
 		}
 		viewRender.HTML(w, http.StatusOK, "login", payload, noLayout)
 		return
 
 	}
 
-	if gosecrets.CompareHashWithPassword(user.PasswordHash, new_password) {
+	if gosecrets.CompareHashWithPassword(user.PasswordHash, newPassword) {
 
 		log.Println("Old Password and new password should not be the same.")
 		payload := passResetMessage{
-			UserUuid:    user_uuid,
-			Code:        security_code,
-			Message:     "Old Password and new password should not be the same, please try again.",
+			UserUUID: userUUID,
+			Code:     securityCode,
+			Message:  "Old Password and new password should not be the same, please try again.",
 		}
 		viewRender.HTML(w, http.StatusOK, "passwordReset", payload, noLayout)
 		return
 
 	}
 
-	pass, err := gosecrets.GetPasswordHash(new_password)
+	pass, err := gosecrets.GetPasswordHash(newPassword)
 	if err != nil {
 
 		payload := passResetMessage{
-			UserUuid:    user_uuid,
-			Code:        security_code,
-			Message:     err.Error(),
+			UserUUID: userUUID,
+			Code:     securityCode,
+			Message:  err.Error(),
 		}
 		viewRender.HTML(w, http.StatusOK, "passwordReset", payload, noLayout)
 		return
@@ -427,13 +423,13 @@ func passwordResetAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resetPass := queries["resetPass"]
-	if err := dbConn.db.Exec(resetPass, pass, user_uuid).
+	if err := dbConn.db.Exec(resetPass, pass, userUUID).
 		Error; err != nil {
 
 		payload := passResetMessage{
-			UserUuid:    user_uuid,
-			Code:        security_code,
-			Message:     "Sorry! Could not process request",
+			UserUUID: userUUID,
+			Code:     securityCode,
+			Message:  "Sorry! Could not process request",
 		}
 		viewRender.HTML(w, http.StatusOK, "passwordReset", payload, noLayout)
 		return
