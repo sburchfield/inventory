@@ -25,4 +25,16 @@ var queries = map[string]string{
                     inner join inventory.stores on orders.store_id = stores.id
                     where orders.created_at between ? and ?
                     and orders.user_uuid = ?;`,
+
+	"getLatestOrders": `
+											SELECT DISTINCT ON (item_id)
+											    *
+											FROM
+											    inventory.orders
+											where user_uuid = ?
+											and created_at > to_timestamp(concat(current_date , ' 08:00:00'), 'YYYY-MM-DD hh24:mi:ss')
+											and created_at < to_timestamp(concat(current_date , ' 23:59:59'), 'YYYY-MM-DD hh24:mi:ss')
+											ORDER BY
+											    item_id,
+											    updated_at DESC;`,
 }

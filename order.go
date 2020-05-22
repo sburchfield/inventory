@@ -5,7 +5,32 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
+
+func getLatestOrders(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	input := vars["user_uuid"]
+
+	var orders []Orders
+
+	getLatestOrders := queries["getLatestOrders"]
+
+	if err := dbConn.db.Raw(getLatestOrders, input).Scan(&orders); err != nil {
+		log.Println(err)
+	}
+
+	payload := struct {
+		LatestOrders []Orders
+	}{
+		LatestOrders: orders,
+	}
+
+	viewRender.JSON(w, http.StatusOK, payload)
+
+}
 
 func updateOrders(w http.ResponseWriter, r *http.Request) {
 

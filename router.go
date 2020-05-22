@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -58,8 +57,7 @@ func defineRoutes() {
 	apiMuxRouter.HandleFunc("/api/select/items", selectItems)
 
 	apiMuxRouter.HandleFunc("/api/updateOrders", updateOrders).Methods("POST")
-
-
+	apiMuxRouter.HandleFunc("/api/getLatestOrders/{user_uuid}", getLatestOrders)
 
 	muxRouter.HandleFunc("/logout", logout)
 

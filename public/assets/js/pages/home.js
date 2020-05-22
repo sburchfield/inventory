@@ -4,6 +4,32 @@ $(document).ready( function () {
     return self.indexOf(value) === index;
   }
 
+function getLatestOrders(user_uuid){
+  $.ajax({
+    method: "GET",
+    url: "http://localhost:3000/api/getLatestOrders/" + user_uuid
+  })
+  .done(function( data ) {
+
+    console.log(data);
+
+    data.LatestOrders.forEach(item => {
+      console.log(item);
+
+      $("#" + item.ItemID).val(item.Amount)
+    })
+
+    $('#store').val(data.LatestOrders[0].StoreID)
+
+
+  })
+  .fail(function( err ){
+
+    console.log("error: ", err);
+
+  })
+}
+
   $.ajax({
     method: "GET",
     url: "http://localhost:3000/api/select/stores"
@@ -65,11 +91,13 @@ $(document).ready( function () {
       html = `
               <div class="col-6 form-group">
                 <label class="item-label" for="`+element.ID+`">`+element.ItemName+`</label>
-                <input class="form-control item-input" name="`+element.ID+`" type="number">
+                <input class="form-control item-input" name="`+element.ID+`" id="`+element.ID+`" type="number">
               </div>
              `
       $("#"+element.Category.replace(/ /g, "_")).append(html)
     });
+
+    getLatestOrders('88040ec0-460b-428c-8cd9-d08fc8c46468')
 
   })
   .fail(function( err ){
@@ -105,7 +133,7 @@ $(document).ready( function () {
     data.forEach(element => {
       // console.log(element);
 
-      element.UserUuid = user
+      element.UserUUID = user
       element.StoreId = store
     })
 
