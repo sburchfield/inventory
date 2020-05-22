@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -45,12 +46,16 @@ func updateOrders(w http.ResponseWriter, r *http.Request) {
 
 	for i := range orders {
 
-		if err := dbConn.db.Create(&orders[i]).Error; err != nil {
-
-			log.Println(err)
-			viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
-			return
-
+		if err := dbConn.db.Where("amount = ? and user_uuid = ? and item_id = ? and store_id = ? and created_at::date = current_date",
+			orders[i].Amount,
+			orders[i].UserUUID,
+			orders[i].ItemID,
+			orders[i].StoreID).First(&orders[i]).Error; err != nil {
+			if err := dbConn.db.Create(&orders[i]).Error; err != nil {
+				log.Println(err)
+				viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
+				return
+			}
 		}
 
 	}
@@ -64,19 +69,25 @@ func updateOrders(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	for i := range emailOrder {
-		emailOrder[i].FormatTime = emailOrder[i].UpdatedAt.Format("Mon Jan _2 15:04:05 2006")
+	var users []user
+
+	if err := dbConn.db.Where("role = ?", "admin").Find(&users).Error; err != nil {
+		log.Println(err)
+		viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
+		return
 	}
 
 	payloadEmail := struct {
-		EmailOrder []EmailOrder
+		EmailOrder  []EmailOrder
+		LastUpdated string
 	}{
-		EmailOrder: emailOrder,
+		EmailOrder:  emailOrder,
+		LastUpdated: time.Now().Format("Mon Jan _2 15:04:05 2006"),
 	}
 
-	// TODO: send email to all admins
-
-	sendOrdersEmail("saburchfield@gmail.com", payloadEmail)
+	for _, user := range users {
+		sendOrdersEmail(user.UserEmail, payloadEmail)
+	}
 
 	viewRender.Text(w, http.StatusCreated, "Success!")
 

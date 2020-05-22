@@ -19,7 +19,11 @@ function getLatestOrders(user_uuid){
       $("#" + item.ItemID).val(item.Amount)
     })
 
-    $('#store').val(data.LatestOrders[0].StoreID)
+    if(data.LatestOrders.length >= 1){
+      $('#store').val(data.LatestOrders[0].StoreID)
+      $("#store").prop('disabled', 'disabled')
+    }
+
 
 
   })
@@ -154,6 +158,7 @@ function getLatestOrders(user_uuid){
 
       $('#responseModal').modal()
       $("#responseMessage").html(data)
+      $('#store').prop('disabled', 'disabled')
 
     })
     .fail(function( err ){

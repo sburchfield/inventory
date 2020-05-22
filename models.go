@@ -106,12 +106,11 @@ func (Orders) TableName() string {
 }
 
 type EmailOrder struct {
-	CreatedAt  *time.Time
-	UpdatedAt  *time.Time
-	FormatTime string
-	ItemName   string
-	Amount     string
-	StoreName  string
-	FirstName  string
-	LastName   string
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	ItemName  string
+	Amount    string
+	StoreName string
+	FirstName string
+	LastName  string
 }

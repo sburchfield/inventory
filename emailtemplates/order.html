@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-        <title>Inventory Order</title>
+        <title>Stock Up Order</title>
 
         <style type="text/css">
             img {
@@ -84,7 +84,7 @@
                                         </tr>
                                         <tr style="font-family: Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                             <td class="content-block" style="font-family: Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
-                                              {{ (index .EmailOrder 0).StoreName }}  {{ (index .EmailOrder 0).FormatTime }}
+                                              {{ (index .EmailOrder 0).StoreName }}  {{ .LastUpdated }}
                                             </td>
                                         </tr>
                                         {{ range .EmailOrder }}
