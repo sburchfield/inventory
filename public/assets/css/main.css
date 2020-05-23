@@ -46,6 +46,10 @@ main{
   padding: 3em 0;
 }
 
+.card{
+  box-shadow: 5px 5px 10px 0 rgba(0,0,0,0.08);
+}
+
 .card-title{
   text-align: center;
 }
@@ -63,7 +67,7 @@ main{
 }
 
 .itemsWrapper{
-  width: 95%;
+  width: 96%;
   padding: 2em;
   margin: 0.5em auto;
   box-sizing: border-box;
@@ -81,4 +85,18 @@ main{
 
 select{
   text-transform: capitalize;
+}
+
+#itemsGroup{
+  padding: 0 1.5em;
+}
+
+@media only screen and (max-width: 600px) {
+  label {
+   font-size: 0.7em;
+  }
+
+  #itemsGroup{
+    padding: 0 0.5em;
+  }
 }

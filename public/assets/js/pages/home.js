@@ -75,7 +75,7 @@ function getLatestOrders(user_uuid){
     divArray.forEach( element => {
       html = `
           <div class="col-lg-6">
-            <div class="itemsWrapper card">
+            <div class="itemsWrapper card" style="height: 95%;">
               <h3 class="text-center category-header">`+element.replace(/_/g, " ")+`</h3>
               <div class="row" id=`+element+`></div>
             </div>
