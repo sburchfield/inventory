@@ -29,6 +29,10 @@ main{
   text-align: right;
 }
 
+.category-header{
+  text-transform: capitalize;
+}
+
 .table-card{
   padding: 2em 1em;
   margin: 0 0 0.5em 0;
@@ -59,16 +63,22 @@ main{
 }
 
 .itemsWrapper{
+  width: 95%;
   padding: 2em;
-  margin: 0.5em 0;
+  margin: 0.5em auto;
+  box-sizing: border-box;
 }
 
 .item-label{
   width: 100%;
-
+  text-transform: capitalize;
 }
 
 .btn{
   width: 10em;
   margin: 0 1em;
+}
+
+select{
+  text-transform: capitalize;
 }

@@ -18,7 +18,7 @@ $(document).ready( function () {
 
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/api/updateCategories",
+      url: "/api/updateCategories",
       data: data
     }).done(function( data ) {
 
@@ -72,7 +72,7 @@ $(document).ready( function () {
           if(result){
             $.ajax({
               method: "GET",
-              url: "http://localhost:3000/api/removeCategory/"+ category_id + "/" + category,
+              url: "/api/removeCategory/"+ category_id + "/" + category,
             }).done(function( data ) {
 
                 deletedCategoriesTable.clear()
@@ -125,7 +125,7 @@ $(document).ready( function () {
               if(result){
                 $.ajax({
                   method: "GET",
-                  url: "http://localhost:3000/api/restoreCategory/"+ category_id[1] + "/" + category,
+                  url: "/api/restoreCategory/"+ category_id[1] + "/" + category,
                 }).done(function( data ) {
                   currentCategoriesTable.clear()
 

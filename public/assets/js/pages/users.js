@@ -10,7 +10,7 @@ $(document).ready( function () {
 
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/signupaction",
+      url: "/signupaction",
       data: data
     }).done(function( data ) {
 
@@ -63,7 +63,7 @@ $(document).ready( function () {
           if(result){
             $.ajax({
               method: "GET",
-              url: "http://localhost:3000/removeUser/"+ user_uuid,
+              url: "/removeUser/"+ user_uuid,
             }).done(function( data ) {
 
               console.log(data);
@@ -117,7 +117,7 @@ $(document).ready( function () {
               if(result){
                 $.ajax({
                   method: "GET",
-                  url: "http://localhost:3000/restoreUser/"+ user_uuid[1],
+                  url: "/restoreUser/"+ user_uuid[1],
                 }).done(function( data ) {
                   currentUsersTable.clear()
 
@@ -176,7 +176,7 @@ $(document).ready( function () {
           if(result){
             $.ajax({
               method: "POST",
-              url: "http://localhost:3000/api/updateRole",
+              url: "/api/updateRole",
               contentType: "application/json",
               dataType: "text",
               data: JSON.stringify(data)

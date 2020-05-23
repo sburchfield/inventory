@@ -7,19 +7,18 @@ $(document).ready( function () {
 function getLatestOrders(user_uuid){
   $.ajax({
     method: "GET",
-    url: "http://localhost:3000/api/getLatestOrders/" + user_uuid
+    url: "/api/getLatestOrders/" + user_uuid
   })
   .done(function( data ) {
 
-    console.log(data);
-
     data.LatestOrders.forEach(item => {
-      console.log(item);
+      // console.log(item);
 
       $("#" + item.ItemID).val(item.Amount)
     })
 
     if(data.LatestOrders.length >= 1){
+      append = true
       $('#store').val(data.LatestOrders[0].StoreID)
       $("#store").prop('disabled', 'disabled')
     }
@@ -36,31 +35,23 @@ function getLatestOrders(user_uuid){
 
   $.ajax({
     method: "GET",
-    url: "http://localhost:3000/api/select/stores"
+    url: "/api/select/stores"
   })
   .done(function( data ) {
-
-    // console.log(data);
-
     let stores = data.Stores
     let html;
-
-    stores.forEach(element => {
-      html = '<option value="'+element.ID+'">'+element.StoreName+'</option>'
-      $("#store").append(html)
-    });
-
-
+      stores.forEach(element => {
+        html = '<option value="'+element.ID+'">'+element.StoreName+'</option>'
+        $("#store").append(html)
+      });
   })
   .fail(function( err ){
-
     console.log("error: ", err);
-
   })
 
   $.ajax({
     method: "GET",
-    url: "http://localhost:3000/api/select/items"
+    url: "/api/select/items"
   })
   .done(function( data ) {
 
@@ -83,9 +74,11 @@ function getLatestOrders(user_uuid){
 
     divArray.forEach( element => {
       html = `
-          <div class="col-lg-5 itemsWrapper card">
-          <h3 class="text-center">`+element.replace(/_/g, " ")+`</h3>
-            <div class="row" id=`+element+`></div>
+          <div class="col-lg-6">
+            <div class="itemsWrapper card">
+              <h3 class="text-center category-header">`+element.replace(/_/g, " ")+`</h3>
+              <div class="row" id=`+element+`></div>
+            </div>
           </div>
       `
       $("#itemsGroup").append(html)
@@ -149,7 +142,7 @@ function getLatestOrders(user_uuid){
 
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/api/updateOrders",
+      url: "/api/updateOrders",
       contentType: "application/json",
       dataType: "text",
       data: JSON.stringify(newData)

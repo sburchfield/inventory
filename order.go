@@ -56,6 +56,12 @@ func updateOrders(w http.ResponseWriter, r *http.Request) {
 				viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
 				return
 			}
+		} else {
+			if err := dbConn.db.Model(&orders[i]).UpdateColumn("updated_at", time.Now()).Error; err != nil {
+				log.Println(err)
+				viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
+				return
+			}
 		}
 
 	}
