@@ -79,9 +79,6 @@ function getLatestOrders(user_uuid){
               <h3 class="text-center category-header">`+element.replace(/_/g, " ")+`</h3>
               <div class="row" id=`+element+`>
               </div>
-              <div class="row justify-content-end">
-                <button type="button" class="btn btn-sm btn-outline-secondary save-btn" style="width: 5em;"><i class="fa fa-save"></i> Save</button>
-              </div>
             </div>
           </div>
       `
@@ -94,6 +91,7 @@ function getLatestOrders(user_uuid){
               <div class="col-6 form-group">
                 <label class="item-label" for="`+element.ID+`">`+element.ItemName+`</label>
                 <input class="form-control item-input" name="`+element.ID+`" id="`+element.ID+`" type="number">
+                <label class="response" for="`+element.ID+`-repsonse"></label>
               </div>
              `
       $("#"+element.Category.replace(/ /g, "_")).append(html)
@@ -159,47 +157,35 @@ function getLatestOrders(user_uuid){
       })
   })
 
-  $(document).on("click", ".save-btn", function(){
+  $(document).on("change", ".item-input", function(){
 
       let store = $("#store").val();
       let user= $("#user").val();
-      let data = $("#itemsForm").serializeArray()
+      let amount = parseInt($(this).val())
+      let item_id = $(this).attr('name')
+      let input = $(this)
 
       if(store === "" || store === undefined || store == null){
+        $('.item-input').focusout();
+        $('.item-input').val('')
         $('#responseModal').modal()
         $("#responseMessage").html("Error! You must select a store!")
         return
       }
 
-      data = data.map(function(obj) {
-          obj['ItemId'] = obj['name']; // Assign new key
-          obj['Amount'] = parseInt(obj['value']); // Assign new key
-          delete obj['name']; // Delete old key
-          delete obj['value']; // Delete old key
-          return obj;
-      });
-
-      data.forEach(element => {
-
-        element.UserUUID = user
-        element.StoreId = store
-      })
-
-      let newData = data.filter(value => isNaN(value.Amount) === false)
-
-      $("html, body").animate({ scrollTop: 0 }, "slow");
+      let data = { Amount: amount, ItemId: item_id, StoreId: store, UserUUID: user}
 
       $.ajax({
         method: "POST",
         url: "/api/save/updateOrders",
         contentType: "application/json",
         dataType: "text",
-        data: JSON.stringify(newData)
+        data: JSON.stringify(data)
       })
       .done(function( data ) {
 
-        $('#responseModal').modal()
-        $("#responseMessage").html(data)
+        input.next(".response").empty()
+        input.next(".response").html('<span class="animate__animated animate__fadeOut animate__delay-1s">' + data + '</span>')
         $('#store').prop('disabled', 'disabled')
 
       })

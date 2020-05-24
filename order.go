@@ -32,10 +32,7 @@ func getLatestOrders(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func updateOrders(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	method := vars["method"]
+func sendUpdateOrders(w http.ResponseWriter, r *http.Request) {
 
 	var orders []Orders
 	var emailOrder []EmailOrder
@@ -69,39 +66,68 @@ func updateOrders(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	if method == "send" {
+	getOrderEmail := queries["getOrderEmail"]
 
-		getOrderEmail := queries["getOrderEmail"]
+	// now := time.Now()
+	// then := now.AddDate(0, 0, -12)
 
-		// now := time.Now()
-		// then := now.AddDate(0, 0, -12)
+	if err := dbConn.db.Raw(getOrderEmail, orders[0].UserUUID).Scan(&emailOrder); err != nil {
+		log.Println(err)
+	}
 
-		if err := dbConn.db.Raw(getOrderEmail, orders[0].UserUUID).Scan(&emailOrder); err != nil {
-			log.Println(err)
-		}
+	var users []user
 
-		var users []user
+	if err := dbConn.db.Where("role = ?", "admin").Find(&users).Error; err != nil {
+		log.Println(err)
+		viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
+		return
+	}
 
-		if err := dbConn.db.Where("role = ?", "admin").Find(&users).Error; err != nil {
-			log.Println(err)
-			viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
-			return
-		}
+	payloadEmail := struct {
+		EmailOrder  []EmailOrder
+		LastUpdated string
+	}{
+		EmailOrder:  emailOrder,
+		LastUpdated: time.Now().Format("Mon Jan _2 15:04:05 2006"),
+	}
 
-		payloadEmail := struct {
-			EmailOrder  []EmailOrder
-			LastUpdated string
-		}{
-			EmailOrder:  emailOrder,
-			LastUpdated: time.Now().Format("Mon Jan _2 15:04:05 2006"),
-		}
-
-		for _, user := range users {
-			sendOrdersEmail(user.UserEmail, payloadEmail)
-		}
-
+	for _, user := range users {
+		sendOrdersEmail(user.UserEmail, payloadEmail)
 	}
 
 	viewRender.Text(w, http.StatusCreated, "Success!")
+
+}
+
+func saveUpdateOrders(w http.ResponseWriter, r *http.Request) {
+
+	var order Orders
+
+	err := json.NewDecoder(r.Body).Decode(&order)
+	if err != nil {
+		log.Println("YOUR ERROR: ", err)
+		// http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := dbConn.db.Where("amount = ? and user_uuid = ? and item_id = ? and store_id = ? and created_at::date = current_date",
+		order.Amount,
+		order.UserUUID,
+		order.ItemID,
+		order.StoreID).First(&order).Error; err != nil {
+		if err := dbConn.db.Create(&order).Error; err != nil {
+			log.Println(err)
+			viewRender.Text(w, http.StatusBadRequest, "Error!")
+			return
+		}
+	} else {
+		if err := dbConn.db.Model(&order).UpdateColumn("updated_at", time.Now()).Error; err != nil {
+			log.Println(err)
+			viewRender.Text(w, http.StatusBadRequest, "Error!")
+			return
+		}
+	}
+
+	viewRender.Text(w, http.StatusCreated, "Saved!")
 
 }

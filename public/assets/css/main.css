@@ -103,6 +103,12 @@ td{
   text-align: center;
 }
 
+.response{
+  font-size: 0.6em;
+  color: #2D882D;
+  margin-bottom: 0 !important;
+}
+
 @media only screen and (max-width: 600px) {
   label {
    font-size: 0.7em;
