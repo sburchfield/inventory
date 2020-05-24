@@ -9,12 +9,16 @@ main{
 .container{
   max-width: 1920px;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
 }
 
 .row{
   padding: 0;
   margin: 0;
+}
+
+.admin-wrapper{
+  padding: 2em 1em
 }
 
 .user-info{
@@ -78,17 +82,25 @@ main{
   text-transform: capitalize;
 }
 
-.btn{
+/* .btn{
   width: 10em;
   margin: 0 1em;
-}
+} */
 
 select{
   text-transform: capitalize;
 }
 
+td{
+  text-transform: capitalize;
+}
+
 #itemsGroup{
   padding: 0 1.5em;
+}
+
+#responseMessage{
+  text-align: center;
 }
 
 @media only screen and (max-width: 600px) {

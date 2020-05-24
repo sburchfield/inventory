@@ -56,7 +56,7 @@ func defineRoutes() {
 	apiMuxRouter.HandleFunc("/api/select/stores", selectStores)
 	apiMuxRouter.HandleFunc("/api/select/items", selectItems)
 
-	apiMuxRouter.HandleFunc("/api/updateOrders", updateOrders).Methods("POST")
+	apiMuxRouter.HandleFunc("/api/{method}/updateOrders", updateOrders).Methods("POST")
 	apiMuxRouter.HandleFunc("/api/getLatestOrders/{user_uuid}", getLatestOrders)
 
 	muxRouter.HandleFunc("/logout", logout)

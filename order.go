@@ -34,6 +34,9 @@ func getLatestOrders(w http.ResponseWriter, r *http.Request) {
 
 func updateOrders(w http.ResponseWriter, r *http.Request) {
 
+	vars := mux.Vars(r)
+	method := vars["method"]
+
 	var orders []Orders
 	var emailOrder []EmailOrder
 
@@ -66,33 +69,37 @@ func updateOrders(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	getOrderEmail := queries["getOrderEmail"]
+	if method == "send" {
 
-	// now := time.Now()
-	// then := now.AddDate(0, 0, -12)
+		getOrderEmail := queries["getOrderEmail"]
 
-	if err := dbConn.db.Raw(getOrderEmail, orders[0].UserUUID).Scan(&emailOrder); err != nil {
-		log.Println(err)
-	}
+		// now := time.Now()
+		// then := now.AddDate(0, 0, -12)
 
-	var users []user
+		if err := dbConn.db.Raw(getOrderEmail, orders[0].UserUUID).Scan(&emailOrder); err != nil {
+			log.Println(err)
+		}
 
-	if err := dbConn.db.Where("role = ?", "admin").Find(&users).Error; err != nil {
-		log.Println(err)
-		viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
-		return
-	}
+		var users []user
 
-	payloadEmail := struct {
-		EmailOrder  []EmailOrder
-		LastUpdated string
-	}{
-		EmailOrder:  emailOrder,
-		LastUpdated: time.Now().Format("Mon Jan _2 15:04:05 2006"),
-	}
+		if err := dbConn.db.Where("role = ?", "admin").Find(&users).Error; err != nil {
+			log.Println(err)
+			viewRender.Text(w, http.StatusBadRequest, "Error! Couldn't submit form.")
+			return
+		}
 
-	for _, user := range users {
-		sendOrdersEmail(user.UserEmail, payloadEmail)
+		payloadEmail := struct {
+			EmailOrder  []EmailOrder
+			LastUpdated string
+		}{
+			EmailOrder:  emailOrder,
+			LastUpdated: time.Now().Format("Mon Jan _2 15:04:05 2006"),
+		}
+
+		for _, user := range users {
+			sendOrdersEmail(user.UserEmail, payloadEmail)
+		}
+
 	}
 
 	viewRender.Text(w, http.StatusCreated, "Success!")

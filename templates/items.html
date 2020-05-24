@@ -1,10 +1,11 @@
 
 		<main class="container">
-			<div class="row justify-content-around">
-				<div class="col-2 card" style="width: 100%;">
+			<div class="row justify-content-around admin-wrapper">
+				<div class="col-lg-3">
+					<div class="card" style="width: 100%; height: 99%;">
 					<div id="responseMessage"></div>
 					 <div class="card-body">
-						<form id="itemsForm" class="form-inline justify-content-around align-items-center">
+						<form id="itemsForm" class="justify-content-around align-items-center">
 							<div class="form-group">
 								<label class="sr-only" for="item_name">Item Name</label>
 								<input type="text" class="form-control" id="item_name" name="item_name" placeholder="Item Name">
@@ -29,11 +30,14 @@
 
 								</select>
 							</div>
-							<button type="submit" class="btn btn-primary">Submit</button>
+							<div class="row justify-content-center">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
 						</form>
 						</div>
+					</div>
 				</div>
-				<div class="col-9">
+				<div class="col-lg-9">
 					<div class="row justify-content-center">
 							<div class="card table-card" style="width: 100%;">
 								<h3 class="text-center">Current Items</h3>
